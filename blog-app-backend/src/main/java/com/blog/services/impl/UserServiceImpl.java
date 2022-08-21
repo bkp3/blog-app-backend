@@ -1,14 +1,17 @@
 package com.blog.services.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.blog.entities.User;
+import com.blog.exceptions.ResourceNotFoundException;
 import com.blog.payloads.UserDto;
 import com.blog.repositories.UserRepository;
 import com.blog.services.UserService;
-
+@Service
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -22,26 +25,40 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto updateUser(UserDto user, int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDto updateUser(UserDto userDto, int userId) {
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+
+		user.setName(userDto.getName());
+		user.setEmail(userDto.getEmail());
+		user.setPassword(userDto.getPassword());
+		user.setAbout(userDto.getAbout());
+
+		User updatedUser = this.userRepository.save(user);
+		UserDto userDto1 = this.userToDto(updatedUser);
+		return userDto1;
 	}
 
 	@Override
-	public UserDto getUserById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDto getUserById(int userId) {
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+		return this.userToDto(user);
 	}
 
 	@Override
 	public List<UserDto> getAllUsers() {
-		// TODO Auto-generated method stub
-		return null;
+		List<User> users = this.userRepository.findAll();
+		List<UserDto> userDtos = users.stream().map(user -> this.userToDto(user)).collect(Collectors.toList());
+		return userDtos;
+
 	}
 
 	@Override
-	public void deleteUser(int id) {
-		// TODO Auto-generated method stub
+	public void deleteUser(int userId) {
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+		this.userRepository.delete(user);
 
 	}
 
