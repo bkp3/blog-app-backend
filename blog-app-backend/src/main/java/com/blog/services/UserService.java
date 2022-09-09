@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.blog.payloads.UserDto;
 
-
 public interface UserService {
 
 	UserDto createUser(UserDto user);
@@ -19,4 +18,5 @@ public interface UserService {
 
 	void deleteUser(int id);
 
+	UserDto registerNewUser(UserDto user);
 }
