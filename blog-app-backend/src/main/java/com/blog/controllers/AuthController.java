@@ -33,7 +33,7 @@ import com.blog.security.JwtTokenHelper;
 import com.blog.services.UserService;
 
 @RestController
-@RequestMapping("/api/v1/auth/")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
 	@Autowired
@@ -50,10 +50,11 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
+		System.out.println(request.getUsername() + "-" + request.getPassword());
 		this.authenticate(request.getUsername(), request.getPassword());
 		UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
 		String token = this.jwtTokenHelper.generateToken(userDetails);
-
+		System.out.println(token);
 		JwtAuthResponse response = new JwtAuthResponse();
 		response.setToken(token);
 
